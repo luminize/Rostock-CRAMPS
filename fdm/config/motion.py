@@ -3,7 +3,7 @@ from machinekit import rtapi as rt
 from machinekit import config as c
 
 
-def setup_motion(kinematics='trivkins'):
+def setup_motion(kinematics='trivkins', with_base_thread=False):
     rt.loadrt(kinematics)
     if kinematics is 'lineardeltakins':
         hal.Pin('lineardeltakins.L').set(c.find('MACHINE', 'CF_ROD'))
@@ -12,12 +12,22 @@ def setup_motion(kinematics='trivkins'):
     rt.loadrt('tp')
 
     # motion controller, get name and thread periods from ini file
-    rt.loadrt(c.find('EMCMOT', 'EMCMOT'),
+    # for the pepper device a fast base thread is needed
+    if not with_base_thread:
+        rt.loadrt(c.find('EMCMOT', 'EMCMOT'),
               servo_period_nsec=c.find('EMCMOT', 'SERVO_PERIOD'),
               num_joints=c.find('TRAJ', 'AXES'),
               num_aio=51,
               num_dio=21,
               kins=kinematics)
+    else:
+        rt.loadrt(c.find('EMCMOT', 'EMCMOT'),
+              servo_period_nsec=c.find('EMCMOT', 'SERVO_PERIOD'),
+              base_period_nsec=c.find('EMCMOT', 'BASE_PERIOD'),
+              num_joints=c.find('TRAJ', 'AXES'),
+              num_aio=51,
+              num_dio=21,
+              kins=kinematics)        
 
 
 def setup_temperature_io(name):
