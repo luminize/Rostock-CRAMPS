@@ -38,6 +38,7 @@ def init_hardware(thread):
                 % (c.find('HBP', 'THERMISTOR', defaultThermistor),
                    c.find('EXTRUDER_1', 'THERMISTOR', defaultThermistor)),
                 wait_name='temp')
+
     watchList.append(['temp', 0.1])
 
     base.usrcomp_status('temp', 'temp-hw', thread='%s' % thread) # 'servo-thread')
